@@ -1,0 +1,145 @@
+<article class="guide">
+  <carousel class="deck container-fluid">
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h3>Introduction</h3>
+        <p class="lead">Getting started with the Tradekeeper demo</p>
+      </div>
+      <div class="col-sm-6">
+        <p>
+          I want to demonstrate the value of insider trading data in <a href="https://www.sec.gov/edgar/searchedgar/companysearch.html">EDGAR</a>, the SEC's corporate filings database. To do so, you will interact with a database that has been pre-populated with 1.1 million filings taken from EDGAR. In the next few slides you will:
+        </p>
+        <ul class="big">
+          <li>Explore Caterpillar Inc's boardroom owners</li>
+          <li>Discover which SP500 companies have the most influence</li>
+          <li>Explore Warren Buffett's network</li>
+          <li>See who can introduce Caterpillar's CEO to Warren Buffett</li>
+          <li>Visualize Intuit Inc's second degree network</li>
+        </ul>
+      </div>
+      <div class="col-sm-3"><img src="images/click-next.png" style="position:relative;right:-23px" class="pull-right"></div>
+    </slide>
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h5>The Ownership Graph</h5><br>
+        <h3>Find</h3>
+        <p>Example queries for finding individual nodes.</p>
+        <ol>
+          <li>Click on any query example</li>
+          <li>Run the query from the editor</li>
+          <li>Double click on any graph nodes to explore its network</li>
+					<li>Hover over nodes and relationships to see details</li>
+        </ol>
+      </div>
+      <div class="col-sm-9">
+        <p class="lead">Find the company named &quot;NIKE INC&quot;...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH (company:IssuerOrOwner) WHERE company.name = &quot;NIKE INC&quot; RETURN company</pre>
+        </figure>
+        <p class="lead">Find 10 companies...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH (company:IssuerOrOwner) RETURN company.name LIMIT 10</pre>
+        </figure>
+        <p class="lead">Find the company named &quot;CATERPILLAR INC&quot;...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH (company:IssuerOrOwner) WHERE company.name = &quot;CATERPILLAR INC&quot; RETURN company</pre>
+        </figure>
+      </div>
+    </slide>
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h5>The Ownership Graph</h5><br>
+        <h3>Solve</h3>
+        <p>
+          There's a graph theory that says that any person is at most six introductions away from meeting any other person on earth. This is the theory of <a href="https://en.wikipedia.org/wiki/Six_degrees_of_separation">"six degrees of separation"</a> and it holds true in many networks including this one. 
+        </p>
+      </div>
+      <div class="col-sm-9">
+        <p class="lead">Find the most connected players in the SP500</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">match (p)-[r]->(m)
+return p.name as IssuerOrOwner, p.sic as IndustrialClassification, count(r) as DegreeScore
+order by DegreeScore desc limit 20</pre>
+          <aside class="warn">Can you find Warren Buffett in the list? Is Berkshire Hathaway, which is under Buffett's control, also on the list?</aside>
+        </figure>
+      </div>
+    </slide>
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h5>The Ownership Graph</h5><br>
+        <h3>Examine</h3>
+        <p>
+          Let's take a closer look at Warren Buffett's network.
+        </p>
+        <p>Topics:</p>
+        <ol>
+          <li>What kind of ownership does Buffett typically have in companies?</li>
+          <li>Which companies does Berkshire Hathaway own that Buffett also owns?</li>
+					<li>Who's invested in Berkshire Hathaway?</li>
+        </ol>
+      </div>
+      <div class="col-sm-9">
+        <p class="lead">Show Warren Buffett's network...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH (p:Owner) WHERE p.name = &quot;BUFFETT WARREN E&quot; RETURN p</pre>
+					<aside class="warn">Can you see that the Bill and Melinda Gates Foundation owns Berkshire Hathaway?</aside>
+        </figure>
+      </div>
+    </slide>
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h5>The Ownership Graph</h5><br>
+        <h3>Connect the Dots</h3>
+        <p>
+          In graph theory, the <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon#Bacon_numbers">Bacon Path</a> (or Bacon Number) is the shortest distance between any two nodes in the network.
+        </p>
+      </div>
+      <div class="col-sm-9">
+        <p class="lead">Find the Bacon Path between the CEO of Caterpillar and Warren Buffet...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH p=shortestPath(
+	(doug:Owner {name:&quot;OBERHELMAN DOUGLAS R&quot;})-[*]-(warren:Owner {name:&quot;BUFFETT WARREN E&quot;})
+)
+RETURN p</pre>
+        </figure>
+      </div>
+    </slide>
+    <slide class="row-fluid">
+      <div class="col-sm-3">
+        <h5>The Ownership Graph</h5><br>
+        <h3>Extended Networks</h3>
+        <p>
+          
+        </p>
+      </div>
+      <div class="col-sm-9">
+        <p class="lead">Find companies that are connected to Intuit Inc through its owners...</p>
+        <figure>
+          <pre class="pre-scrollable code runnable">MATCH (startCompany:IssuerOrOwner)-[:IS_OWNER]-(intermediary:Owner)-[:IS_OWNER]-(endCompany:IssuerOrOwner)
+WHERE startCompany.name = &quot;INTUIT INC&quot;
+RETURN startCompany, intermediary, endCompany</pre>
+        </figure>
+      </div>
+    </slide>
+    <slide class="row-fluid header">
+      <div class="col-sm-4">
+        <h3>End of Demo</h3>
+      </div>
+      <div class="col-sm-4">
+        <h3>Next steps</h3>
+        <ul class="undecorated">
+          <li>You're welcome to explore the graph by going back through the examples.</li>
+          <li>Reach out to me for questions about this project at </li>
+        </ul>
+      </div>
+      <div class="col-sm-4">
+        <h3>Improvements</h3>
+        <ul class="undecorated">
+          <li>The search interface needs to be made much simpler so users don't need to write complex queries to explore the graph</li>
+					<li>The visualization needs to render financial data from filings</li>
+          <li>Many more that require $$$...</li>
+        </ul>
+      </div>
+    </slide>
+  </carousel>
+</article>
